@@ -23,6 +23,7 @@ TODOISTA_KEY=1234abcd ./todoista
 - [s] Sync (grab items & projects)
 - [p] Go to projects screen
 - [m] Go to messages screen
+- [<enter>] On an Item to complete it, on a Project to view its Items
 
 
 ## TODO
