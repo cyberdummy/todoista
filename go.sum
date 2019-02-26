@@ -7,6 +7,8 @@ github.com/gdamore/tcell v1.1.1 h1:U73YL+jMem2XfhvaIUfPO6MpJawaG92B2funXVb9qLs=
 github.com/gdamore/tcell v1.1.1/go.mod h1:K1udHkiR3cOtlpKG5tZPD5XxrF7v2y7lDq7Whcj+xkQ=
 github.com/gizak/termui v0.0.0-20190214045005-bb0b559103cb h1:95VyXsRgd4xfS3leAWdBqsVJAzFAPAuqxKuOB2KOHC0=
 github.com/gizak/termui v0.0.0-20190214045005-bb0b559103cb/go.mod h1:TISPFiAGKVhyNxElRxDknJ+HzcUyO7sAJCsc8dfAe+M=
+github.com/google/uuid v1.1.0 h1:Jf4mxPC/ziBnoPIdpQdPJ9OeiomAUHLvxmPRSPH9m4s=
+github.com/google/uuid v1.1.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/lucasb-eyer/go-colorful v0.0.0-20181028223441-12d3b2882a08 h1:5MnxBC15uMxFv5FY/J/8vzyaBiArCOkMdFT9Jsw78iY=
 github.com/lucasb-eyer/go-colorful v0.0.0-20181028223441-12d3b2882a08/go.mod h1:NXg0ArsFk0Y01623LgUqoqcouGDB+PwCCQlrwrG6xJ4=
 github.com/mattn/go-runewidth v0.0.2/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
@@ -17,6 +19,8 @@ github.com/mitchellh/go-wordwrap v1.0.0 h1:6GlHJ/LTGMrIJbwgdqdl2eEH8o+Exx/0m8ir9
 github.com/mitchellh/go-wordwrap v1.0.0/go.mod h1:ZXFpozHsX6DPmq2I0TCekCxypsnAUbP2oI0UX1GXzOo=
 github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d h1:x3S6kxmy49zXVVyhcnrFqxvNVCBPb2KZ9hV2RBdS840=
 github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d/go.mod h1:IuKpRQcYE1Tfu+oAQqaLisqDeXgjyyltCfsaoYN18NQ=
+github.com/rivo/tcell v1.0.0 h1:F96ly3DXu+1JBxBhq3lXWcSViRtKryhUOoe8LfA3K4c=
+github.com/rivo/tcell v1.0.0/go.mod h1:HgVUF0Hx28QKFz0VWVJ0d2jZNOsZAgl4pcp15zNf2tM=
 github.com/rivo/tview v0.0.0-20190213202703-b373355e9db4 h1:Mv2TAXrprnjUP9PxPIXTvRUFgSkiE/8MkUqoRPyEO8Q=
 github.com/rivo/tview v0.0.0-20190213202703-b373355e9db4/go.mod h1:J4W+hErFfITUbyFAEXizpmkuxX7ZN56dopxHB4XQhMw=
 golang.org/x/arch v0.0.0-20181203225421-5a4828bb7045/go.mod h1:cYlCBUl1MsqxdiKgmc4uh7TxZfWSFLOGSRR090WDxt8=
