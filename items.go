@@ -1,6 +1,8 @@
 package main
 
 import (
+	"strconv"
+
 	"github.com/cyberdummy/todoista/todoist"
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
@@ -39,7 +41,7 @@ func buildItemIdx() {
 	}
 
 	for key, value := range items {
-		if app.ui.project.GetItems == nil && value.ProjectId != app.ui.project.ID {
+		if app.ui.project.GetItems == nil && value.ProjectID != app.ui.project.ID {
 			continue
 		}
 
@@ -55,11 +57,9 @@ func buildItemIdx() {
 	}
 }
 
-// addItem displays the form for adding an item.
-func showAddItem() {
+func itemForm(save func()) *tview.Form {
 	var form *tview.Form
 
-	// make the project drop down
 	dd := make([]string, len(app.todoist.Projects))
 
 	for key, value := range app.todoist.Projects {
@@ -70,30 +70,81 @@ func showAddItem() {
 		AddInputField("Task", "", 0, nil, nil).
 		AddInputField("Date", "tomorrow", 0, nil, nil).
 		AddDropDown("Project", dd, 0, nil).
-		AddButton("Save", func() {
-			SetUiMessage("Saving item...")
-
-			idx, _ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
-
-			err := app.todoist.ItemAdd(
-				form.GetFormItem(0).(*tview.InputField).GetText(),
-				form.GetFormItem(1).(*tview.InputField).GetText(),
-				app.todoist.Projects[idx].ID)
-
-			if err != nil {
-				SetUiMessage("Add item failed! [red]" + err.Error())
-				addMessage(message{message: err.Error(), isError: true})
-				return
-			}
-
-			showScreen(projects)
-			DoSync()
-		}).
+		AddButton("Save", save).
 		AddButton("Quit", func() {
 			showScreen(projects)
 		})
 
-	form.SetBorder(true).SetTitle("Add Item").SetTitleAlign(tview.AlignLeft)
+	return form
+}
+
+// addItem displays the form for adding an item.
+func showAddItem() {
+	var form *tview.Form
+
+	app.ui.status.SetText("Add Item")
+
+	// make the project drop down
+	form = itemForm(func() {
+		SetUiMessage("Adding item...")
+
+		idx, _ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
+
+		err := app.todoist.ItemAdd(
+			form.GetFormItem(0).(*tview.InputField).GetText(),
+			form.GetFormItem(1).(*tview.InputField).GetText(),
+			app.todoist.Projects[idx].ID)
+
+		if err != nil {
+			SetUiMessage("Add item failed! [red]" + err.Error())
+			addMessage(message{message: err.Error(), isError: true})
+			return
+		}
+
+		showScreen(projects)
+		DoSync()
+	})
+
+	createFormLayout(form)
+}
+
+func showUpdateItem(item *todoist.Item) {
+	var form *tview.Form
+
+	app.ui.status.SetText("Edit Item")
+
+	// make the project drop down
+	form = itemForm(func() {
+		SetUiMessage("Updating item...")
+
+		idx, _ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
+
+		err := app.todoist.ItemUpdate(
+			item,
+			form.GetFormItem(0).(*tview.InputField).GetText(),
+			form.GetFormItem(1).(*tview.InputField).GetText(),
+			app.todoist.Projects[idx].ID)
+
+		if err != nil {
+			SetUiMessage("Update item failed! [red]" + err.Error())
+			addMessage(message{message: err.Error(), isError: true})
+			return
+		}
+
+		addMessage(message{message: "Updated item" + strconv.Itoa(item.ID)})
+		showScreen(projects)
+		DoSync()
+	})
+
+	form.GetFormItem(0).(*tview.InputField).SetText(item.Content)
+	form.GetFormItem(1).(*tview.InputField).SetText(item.DateString)
+	// Select Project
+	for key, value := range app.todoist.Projects {
+		if value.ID == item.ProjectID {
+			form.GetFormItem(2).(*tview.DropDown).SetCurrentOption(key)
+			break
+		}
+	}
 
 	createFormLayout(form)
 }

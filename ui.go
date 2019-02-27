@@ -13,6 +13,7 @@ const (
 	items
 	messages
 	addItem
+	updateItem
 )
 
 type userInterface struct {
@@ -56,6 +57,13 @@ func showScreen(show activeScreen) {
 	case addItem:
 		showAddItem()
 		app.ui.screen = show
+		return
+	case updateItem:
+		// figure out selected item
+		row, _ := app.ui.idx.GetSelection()
+		showUpdateItem(app.ui.items[row])
+		app.ui.screen = show
+		return
 		return
 	}
 

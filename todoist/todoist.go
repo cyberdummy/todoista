@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"time"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -24,8 +25,9 @@ type Project struct {
 type Item struct {
 	ID        int
 	Content   string
-	ProjectId int
+	ProjectID int
 	DueDate   time.Time
+	DateString string
 }
 
 type Todoist struct {
@@ -177,6 +179,66 @@ func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 	return nil
 }
 
+func (t Todoist) ItemUpdate(item *Item, content string, date string, projectID int) error {
+	// make the data
+	args := make(JSON)
+	args["id"] = item.ID
+	args["content"] = content
+	args["date_string"] = date
+	args["project_id"] = projectID
+
+	command := Command{
+		Type:   "item_update",
+		UUID:   uuid.New().String(),
+		Args:   args,
+	}
+
+	commands := make([]Command, 1)
+	commands[0] = command
+
+	if item.ProjectID != projectID {
+		// Add a move command if project ID differs
+		moveArgs := make(JSON)
+		moveArgs["to_project"] = projectID
+
+		// Figure out how to make this better?
+		items := make(map[string][]int)
+		prop := strconv.Itoa(item.ProjectID)
+		items[prop] = []int{item.ID}
+		moveArgs["project_items"] = items
+
+		command = Command{
+			Type:   "item_move",
+			UUID:   uuid.New().String(),
+			Args:   moveArgs,
+		}
+
+		commands = append(commands, command)
+	}
+
+	json, err := json.Marshal(commands)
+
+	if err != nil {
+		return err
+	}
+
+	data := url.Values{}
+	data.Set("token", t.token)
+	data.Set("commands", string(json[:]))
+
+	resp, err := http.PostForm("https://todoist.com/api/v7/sync", data)
+
+	if err != nil {
+		return err
+	}
+
+	if resp == nil {
+		log.Println("OH NO")
+	}
+
+	return nil
+}
+
 // Parse the JSON data from a sync for projects, load into the todoist
 // instance.
 func (t *Todoist) loadProjectsData(projects []interface{}) *Todoist {
@@ -204,17 +266,18 @@ func (t *Todoist) loadItemData(items []interface{}) *Todoist {
 			due, _ = time.Parse(
 				"Mon 02 Jan 2006 15:04:05 -0700",
 				item["due_date_utc"].(string))
-		} else {
-			due = time.Time{}
+			} else {
+				due = time.Time{}
+			}
+
+			t.Items = append(t.Items, Item{
+				ID:        int(item["id"].(float64)),
+				Content:   item["content"].(string),
+				ProjectID: int(item["project_id"].(float64)),
+				DueDate:   due,
+				DateString: item["date_string"].(string),
+			})
 		}
 
-		t.Items = append(t.Items, Item{
-			ID:        int(item["id"].(float64)),
-			Content:   item["content"].(string),
-			ProjectId: int(item["project_id"].(float64)),
-			DueDate:   due,
-		})
+		return t
 	}
-
-	return t
-}
