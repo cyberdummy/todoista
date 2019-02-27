@@ -16,14 +16,14 @@ const (
 )
 
 type userInterface struct {
-	app *tview.Application
+	app       *tview.Application
 	idxLayout *tview.Flex
-	idx *tview.Table
-	status *tview.TextView
-	msg *tview.TextView
-	screen activeScreen
-	project *todoist.Project
-	items []*todoist.Item
+	idx       *tview.Table
+	status    *tview.TextView
+	msg       *tview.TextView
+	screen    activeScreen
+	project   *todoist.Project
+	items     []*todoist.Item
 }
 
 // uiInit called at startup after the config is read
@@ -82,11 +82,11 @@ func createStatus() {
 
 func createMessage() {
 	app.ui.msg = tview.NewTextView().
-	SetDynamicColors(true).
-	SetText("-").
-	SetChangedFunc(func() {
-		app.ui.app.Draw()
-	})
+		SetDynamicColors(true).
+		SetText("-").
+		SetChangedFunc(func() {
+			app.ui.app.Draw()
+		})
 }
 
 // createIndexLayout creates the layout that contains an index table.
@@ -97,9 +97,9 @@ func createIndexLayout() {
 
 	app.ui.idxLayout = tview.NewFlex().
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(app.ui.status, 1, 1, false).
-		AddItem(app.ui.idx, 0, 3, false).
-		AddItem(app.ui.msg, 1, 1, false), 0, 2, false)
+			AddItem(app.ui.status, 1, 1, false).
+			AddItem(app.ui.idx, 0, 3, false).
+			AddItem(app.ui.msg, 1, 1, false), 0, 2, false)
 }
 
 func createFormLayout(form *tview.Form) {
@@ -107,9 +107,9 @@ func createFormLayout(form *tview.Form) {
 
 	layout := tview.NewFlex().
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(app.ui.status, 1, 1, false).
-		AddItem(form, 0, 3, false).
-		AddItem(app.ui.msg, 1, 1, false), 0, 2, false)
+			AddItem(app.ui.status, 1, 1, false).
+			AddItem(form, 0, 3, false).
+			AddItem(app.ui.msg, 1, 1, false), 0, 2, false)
 
 	app.ui.app.SetRoot(layout, true)
 	app.ui.app.SetFocus(form)

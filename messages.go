@@ -1,30 +1,30 @@
 package main
 
 import (
-	"time"
 	"log"
+	"time"
 
-	"github.com/rivo/tview"
 	"github.com/gdamore/tcell"
+	"github.com/rivo/tview"
 )
 
 // Defines a message
 type message struct {
 	isError bool
 	message string
-	time time.Time
+	time    time.Time
 }
 
 // messagesInit called when the app starts up, to perform any intialization
 // required.
 func messagesInit() {
-	addMessage(message{ isError: false, message: "Message subsystem intialized" })
+	addMessage(message{isError: false, message: "Message subsystem intialized"})
 }
 
 // messagesShutdown is called then the app is closed, prints any error messages
 // in the stack to stderr.
 func messagesShutdown() {
-	for _,value := range app.msgs {
+	for _, value := range app.msgs {
 		if value.isError {
 			log.Println(value.message)
 		}
@@ -43,8 +43,8 @@ func showMessagesUi() {
 	app.ui.idx.Clear()
 	app.ui.idx.SetSelectable(false, false)
 
-	for key,value := range app.msgs {
-		cell := tview.NewTableCell("["+value.time.Format("2006/01/02 15:04:05")+"]")
+	for key, value := range app.msgs {
+		cell := tview.NewTableCell("[" + value.time.Format("2006/01/02 15:04:05") + "]")
 		cell.SetAlign(tview.AlignLeft)
 		cell.SetBackgroundColor(tcell.ColorGray)
 		cell.SetTextColor(tcell.ColorDefault)
@@ -65,5 +65,5 @@ func showMessagesUi() {
 	}
 
 	app.ui.idx.SetSelectable(true, false)
-	app.ui.idx.Select(0,0)
+	app.ui.idx.Select(0, 0)
 }

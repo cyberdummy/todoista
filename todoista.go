@@ -7,20 +7,19 @@ import (
 
 type todoista struct {
 	todoist *todoist.Todoist
-	msgs []message
-	cfg config
-	ui userInterface
+	msgs    []message
+	cfg     config
+	ui      userInterface
 }
 
 var app todoista
-
 
 func main() {
 	var err error
 	// Read in config from various sources
 	getConfig()
 
-	app.todoist,err = todoist.New(app.cfg.apiKey)
+	app.todoist, err = todoist.New(app.cfg.apiKey)
 
 	if err != nil {
 		panic("Unable to create new todoist")
@@ -50,8 +49,8 @@ func DoSync() {
 	app.todoist, err = app.todoist.ReadSync()
 
 	if err != nil {
-		SetUiMessage("Sync failed! [red]"+err.Error())
-		addMessage(message{message: err.Error(), isError: true, })
+		SetUiMessage("Sync failed! [red]" + err.Error())
+		addMessage(message{message: err.Error(), isError: true})
 		return
 	}
 

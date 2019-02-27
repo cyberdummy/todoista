@@ -1,14 +1,14 @@
 package todoist
 
 import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
-	"log"
-	"encoding/json"
 	"time"
-	"errors"
-	"io/ioutil"
 
 	"github.com/google/uuid"
 )
@@ -16,23 +16,23 @@ import (
 var syncUrl string = "https://todoist.com/api/v7/sync"
 
 type Project struct {
-	Name string
-	ID int
+	Name     string
+	ID       int
 	GetItems func() []Item
 }
 
 type Item struct {
-	ID int
-	Content string
+	ID        int
+	Content   string
 	ProjectId int
-	DueDate time.Time
+	DueDate   time.Time
 }
 
 type Todoist struct {
 	token string
 
 	Projects []Project
-	Items []Item
+	Items    []Item
 
 	httpClient http.Client
 }
@@ -40,7 +40,7 @@ type Todoist struct {
 // Create a new todoist context.
 func New(token string) (*Todoist, error) {
 	return &Todoist{
-		token: token,
+		token:      token,
 		httpClient: http.Client{},
 	}, nil
 }
@@ -63,7 +63,7 @@ func (t *Todoist) ReadSync() (*Todoist, error) {
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 
-	resp,err := t.httpClient.Do(req)
+	resp, err := t.httpClient.Do(req)
 
 	if err != nil {
 		return t, err
@@ -72,7 +72,7 @@ func (t *Todoist) ReadSync() (*Todoist, error) {
 	if resp.StatusCode != 200 {
 		bodyBytes, _ := ioutil.ReadAll(resp.Body)
 		bodyString := string(bodyBytes)
-		return t, errors.New("response code not 200 "+bodyString)
+		return t, errors.New("response code not 200 " + bodyString)
 	}
 
 	var result map[string]interface{}
@@ -86,10 +86,10 @@ func (t *Todoist) ReadSync() (*Todoist, error) {
 }
 
 type Command struct {
-	Type string `json:"type"`
-	Args interface{} `json:"args,omitempty"`
-	UUID string `json:"uuid"`
-	TempID string `json:"temp_id,omitempty"`
+	Type   string      `json:"type"`
+	Args   interface{} `json:"args,omitempty"`
+	UUID   string      `json:"uuid"`
+	TempID string      `json:"temp_id,omitempty"`
 }
 
 type JSON map[string]interface{}
@@ -124,7 +124,7 @@ func (t Todoist) ItemComplete(item Item) {
 
 	//resp,err := client.Do(req)
 
-	resp,err := http.PostForm("https://todoist.com/api/v7/sync", data)
+	resp, err := http.PostForm("https://todoist.com/api/v7/sync", data)
 
 	if err != nil {
 		log.Println("fail")
@@ -146,10 +146,10 @@ func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 	args["project_id"] = projectID
 
 	command := Command{
-		Type: "item_add",
-		UUID: uuid.New().String(),
+		Type:   "item_add",
+		UUID:   uuid.New().String(),
 		TempID: uuid.New().String(),
-		Args: args,
+		Args:   args,
 	}
 
 	commands := make([]Command, 1)
@@ -164,7 +164,7 @@ func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 	data.Set("token", t.token)
 	data.Set("commands", string(json[:]))
 
-	resp,err := http.PostForm("https://todoist.com/api/v7/sync", data)
+	resp, err := http.PostForm("https://todoist.com/api/v7/sync", data)
 
 	if err != nil {
 		return err
@@ -181,11 +181,11 @@ func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 // instance.
 func (t *Todoist) loadProjectsData(projects []interface{}) *Todoist {
 	t.Projects = nil
-	for _,value := range projects {
+	for _, value := range projects {
 		project := value.(map[string]interface{})
 		t.Projects = append(t.Projects, Project{
 			Name: project["name"].(string),
-			ID: int(project["id"].(float64)),
+			ID:   int(project["id"].(float64)),
 		})
 	}
 
@@ -195,13 +195,13 @@ func (t *Todoist) loadProjectsData(projects []interface{}) *Todoist {
 // Parse the JSON data from a sync for items.
 func (t *Todoist) loadItemData(items []interface{}) *Todoist {
 	t.Items = nil
-	for _,value := range items {
+	for _, value := range items {
 		item := value.(map[string]interface{})
 		// check due_date_utc set...
 		var due time.Time
 
 		if item["due_date_utc"] != nil {
-			due,_ = time.Parse(
+			due, _ = time.Parse(
 				"Mon 02 Jan 2006 15:04:05 -0700",
 				item["due_date_utc"].(string))
 		} else {
@@ -209,10 +209,10 @@ func (t *Todoist) loadItemData(items []interface{}) *Todoist {
 		}
 
 		t.Items = append(t.Items, Item{
-			ID: int(item["id"].(float64)),
-			Content: item["content"].(string),
+			ID:        int(item["id"].(float64)),
+			Content:   item["content"].(string),
 			ProjectId: int(item["project_id"].(float64)),
-			DueDate: due,
+			DueDate:   due,
 		})
 	}
 

@@ -21,7 +21,7 @@ func showItemsUi() {
 	buildItemIdx()
 
 	app.ui.idx.SetSelectable(true, false)
-	app.ui.idx.Select(0,0)
+	app.ui.idx.Select(0, 0)
 }
 
 func buildItemIdx() {
@@ -38,7 +38,7 @@ func buildItemIdx() {
 		items = app.todoist.Items
 	}
 
-	for key,value := range items {
+	for key, value := range items {
 		if app.ui.project.GetItems == nil && value.ProjectId != app.ui.project.ID {
 			continue
 		}
@@ -62,36 +62,36 @@ func showAddItem() {
 	// make the project drop down
 	dd := make([]string, len(app.todoist.Projects))
 
-	for key,value := range app.todoist.Projects {
+	for key, value := range app.todoist.Projects {
 		dd[key] = value.Name
 	}
 
 	form = tview.NewForm().
-	AddInputField("Task", "", 0, nil, nil).
-	AddInputField("Date", "tomorrow", 0, nil, nil).
-	AddDropDown("Project", dd, 0, nil).
-	AddButton("Save", func() {
-		SetUiMessage("Saving item...")
+		AddInputField("Task", "", 0, nil, nil).
+		AddInputField("Date", "tomorrow", 0, nil, nil).
+		AddDropDown("Project", dd, 0, nil).
+		AddButton("Save", func() {
+			SetUiMessage("Saving item...")
 
-		idx,_ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
+			idx, _ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
 
-		err := app.todoist.ItemAdd(
-			form.GetFormItem(0).(*tview.InputField).GetText(),
-			form.GetFormItem(1).(*tview.InputField).GetText(),
-			app.todoist.Projects[idx].ID)
+			err := app.todoist.ItemAdd(
+				form.GetFormItem(0).(*tview.InputField).GetText(),
+				form.GetFormItem(1).(*tview.InputField).GetText(),
+				app.todoist.Projects[idx].ID)
 
-		if err != nil {
-			SetUiMessage("Add item failed! [red]"+err.Error())
-			addMessage(message{message: err.Error(), isError: true, })
-			return
-		}
+			if err != nil {
+				SetUiMessage("Add item failed! [red]" + err.Error())
+				addMessage(message{message: err.Error(), isError: true})
+				return
+			}
 
-		showScreen(projects)
-		DoSync()
-	}).
-	AddButton("Quit", func() {
-		showScreen(projects)
-	})
+			showScreen(projects)
+			DoSync()
+		}).
+		AddButton("Quit", func() {
+			showScreen(projects)
+		})
 
 	form.SetBorder(true).SetTitle("Add Item").SetTitleAlign(tview.AlignLeft)
 

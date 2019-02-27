@@ -8,7 +8,7 @@ func bindsInit() {
 	app.ui.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyRune:
-			if (app.ui.screen == addItem) {
+			if app.ui.screen == addItem {
 				break
 			}
 
