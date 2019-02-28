@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"time"
 	"strconv"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -23,10 +23,10 @@ type Project struct {
 }
 
 type Item struct {
-	ID        int
-	Content   string
-	ProjectID int
-	DueDate   time.Time
+	ID         int
+	Content    string
+	ProjectID  int
+	DueDate    time.Time
 	DateString string
 }
 
@@ -188,9 +188,9 @@ func (t Todoist) ItemUpdate(item *Item, content string, date string, projectID i
 	args["project_id"] = projectID
 
 	command := Command{
-		Type:   "item_update",
-		UUID:   uuid.New().String(),
-		Args:   args,
+		Type: "item_update",
+		UUID: uuid.New().String(),
+		Args: args,
 	}
 
 	commands := make([]Command, 1)
@@ -208,9 +208,9 @@ func (t Todoist) ItemUpdate(item *Item, content string, date string, projectID i
 		moveArgs["project_items"] = items
 
 		command = Command{
-			Type:   "item_move",
-			UUID:   uuid.New().String(),
-			Args:   moveArgs,
+			Type: "item_move",
+			UUID: uuid.New().String(),
+			Args: moveArgs,
 		}
 
 		commands = append(commands, command)
@@ -266,18 +266,18 @@ func (t *Todoist) loadItemData(items []interface{}) *Todoist {
 			due, _ = time.Parse(
 				"Mon 02 Jan 2006 15:04:05 -0700",
 				item["due_date_utc"].(string))
-			} else {
-				due = time.Time{}
-			}
-
-			t.Items = append(t.Items, Item{
-				ID:        int(item["id"].(float64)),
-				Content:   item["content"].(string),
-				ProjectID: int(item["project_id"].(float64)),
-				DueDate:   due,
-				DateString: item["date_string"].(string),
-			})
+		} else {
+			due = time.Time{}
 		}
 
-		return t
+		t.Items = append(t.Items, Item{
+			ID:         int(item["id"].(float64)),
+			Content:    item["content"].(string),
+			ProjectID:  int(item["project_id"].(float64)),
+			DueDate:    due,
+			DateString: item["date_string"].(string),
+		})
 	}
+
+	return t
+}

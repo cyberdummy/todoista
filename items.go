@@ -2,6 +2,7 @@ package main
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/cyberdummy/todoista/todoist"
 	"github.com/gdamore/tcell"
@@ -9,7 +10,7 @@ import (
 )
 
 func showItemsUi() {
-	app.ui.status.SetText(app.ui.project.Name)
+	app.ui.status.SetText("|" + app.ui.project.Name + "|")
 	app.ui.idx.SetSelectable(false, false)
 	// When a user selects a project
 	app.ui.idx.SetSelectedFunc(func(row int, column int) {
@@ -27,6 +28,9 @@ func showItemsUi() {
 }
 
 func buildItemIdx() {
+	var cell *tview.TableCell
+	var sb strings.Builder
+
 	app.ui.idx.Clear()
 
 	row := 0
@@ -45,7 +49,15 @@ func buildItemIdx() {
 			continue
 		}
 
-		cell := tview.NewTableCell(value.Content)
+		if !value.DueDate.IsZero() &&
+			value.DueDate.Hour() != 23 &&
+			app.ui.project.ID == -1 {
+			sb.WriteString(value.DueDate.Format("15:00 "))
+		}
+
+		sb.WriteString(value.Content)
+
+		cell = tview.NewTableCell(sb.String())
 		cell.SetAlign(tview.AlignLeft)
 		cell.SetBackgroundColor(tcell.ColorGray)
 		cell.SetTextColor(tcell.ColorDefault)
@@ -54,6 +66,7 @@ func buildItemIdx() {
 
 		row++
 		app.ui.items = append(app.ui.items, &items[key])
+		sb.Reset()
 	}
 }
 
