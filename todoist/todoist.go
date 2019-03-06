@@ -270,6 +270,10 @@ func (t *Todoist) loadItemData(items []interface{}) *Todoist {
 			due = time.Time{}
 		}
 
+		if item["date_string"] == nil {
+			item["date_string"] = ""
+		}
+
 		t.Items = append(t.Items, Item{
 			ID:         int(item["id"].(float64)),
 			Content:    item["content"].(string),
