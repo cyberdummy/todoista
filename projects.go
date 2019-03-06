@@ -67,7 +67,7 @@ func showProjectsUi() {
 		} else if row == 1 {
 			app.ui.project = getTomorrow()
 		} else {
-			app.ui.project = &app.todoist.Projects[(row - 1)]
+			app.ui.project = &app.todoist.Projects[(row - 2)]
 		}
 
 		showScreen(items)
