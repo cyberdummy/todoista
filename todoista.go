@@ -8,6 +8,7 @@ import (
 type todoista struct {
 	todoist *todoist.Todoist
 	msgs    []message
+	hist    []hRecord
 	cfg     config
 	ui      userInterface
 }
@@ -29,6 +30,7 @@ func main() {
 	uiInit()
 
 	messagesInit()
+	historyInit()
 
 	showScreen(projects)
 	DoSync()

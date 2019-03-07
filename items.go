@@ -114,7 +114,12 @@ func showAddItem() {
 			return
 		}
 
-		showScreen(projects)
+		err = historyGoToLast((items|projects))
+
+		if err != nil {
+			showScreen(projects)
+		}
+
 		DoSync()
 	})
 
@@ -145,7 +150,12 @@ func showUpdateItem(item *todoist.Item) {
 		}
 
 		addMessage(message{message: "Updated item" + strconv.Itoa(item.ID)})
-		showScreen(projects)
+		err = historyGoToLast(items)
+
+		if err != nil {
+			showScreen(projects)
+		}
+
 		DoSync()
 	})
 

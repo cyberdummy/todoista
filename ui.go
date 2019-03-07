@@ -9,7 +9,7 @@ import (
 type activeScreen int
 
 const (
-	projects activeScreen = iota + 1
+	projects activeScreen = 1 << iota
 	items
 	messages
 	addItem
@@ -47,9 +47,11 @@ func showScreen(show activeScreen) {
 	switch show {
 	case projects:
 		showProjectsUi() // projects.go
+		historyAdd(hRecord{screen: show})
 		break
 	case items:
 		showItemsUi() // items.go
+		historyAdd(hRecord{screen: show, id: app.ui.project.ID})
 		break
 	case messages:
 		showMessagesUi() // messages.go

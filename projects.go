@@ -35,7 +35,7 @@ func getToday() *todoist.Project {
 func getTomorrow() *todoist.Project {
 	return &todoist.Project{
 		Name: "Tomorrow",
-		ID:   -1,
+		ID:   -2,
 		GetItems: func() []todoist.Item {
 			var arr []todoist.Item
 
