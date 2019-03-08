@@ -61,7 +61,7 @@ func buildItemIdx() {
 
 		if !value.DueDate.IsZero() &&
 			value.DueDate.Hour() != 23 &&
-			app.ui.project.ID == -1 {
+			app.ui.project.ID < 0 {
 			sb.WriteString(value.DueDate.Format("15:00 "))
 		}
 
