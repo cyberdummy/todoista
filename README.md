@@ -32,5 +32,4 @@ TODOISTA_KEY=1234abcd ./todoista
 - Configurable keybindings
 - Tests
 - Put incremental sync loading into goroutine
-- Edit Item
 - Correct visibility issues and naming
