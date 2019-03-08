@@ -80,6 +80,26 @@ func buildItemIdx() {
 	}
 }
 
+func itemDelete() {
+	SetUiMessage("Deleting Item..")
+	// find selected one..
+	row, _ := app.ui.idx.GetSelection()
+
+	if len(app.ui.items) < (row+1) {
+		SetUiMessage("No item selected")
+		return
+	}
+
+	app.todoist.ItemDelete(app.ui.items[row])
+	SetUiMessage("Item Deleted")
+	DoSync()
+
+	// if was last item in list select prev
+	if len(app.ui.items) < (row+1) && row != 0 {
+		app.ui.idx.Select((row-1), 0)
+	}
+}
+
 func itemForm(save func()) *tview.Form {
 	var form *tview.Form
 

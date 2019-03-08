@@ -7,14 +7,13 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-var syncUrl string = "https://todoist.com/api/v7/sync"
+var syncURL string = "https://todoist.com/api/v7/sync"
 
 type Project struct {
 	Name     string
@@ -37,6 +36,7 @@ type Todoist struct {
 	Items    []Item
 
 	httpClient http.Client
+	syncURL string
 }
 
 // Create a new todoist context.
@@ -44,13 +44,19 @@ func New(token string) (*Todoist, error) {
 	return &Todoist{
 		token:      token,
 		httpClient: http.Client{},
+		syncURL: syncURL,
 	}, nil
+}
+
+// SetDomain sets the base domain for reqeusts
+func (t *Todoist) SetDomain (domain string) {
+	t.syncURL = domain + "/api/v7/sync"
 }
 
 // GET's the complete set of data from the todoist API and loads it into the
 // todoist object.
 func (t *Todoist) ReadSync() (*Todoist, error) {
-	req, err := http.NewRequest("GET", syncUrl, nil)
+	req, err := http.NewRequest("GET", t.syncURL, nil)
 
 	if err != nil {
 		return t, err
@@ -79,7 +85,12 @@ func (t *Todoist) ReadSync() (*Todoist, error) {
 
 	var result map[string]interface{}
 	// decoder is better when reading from a stream
-	json.NewDecoder(resp.Body).Decode(&result)
+	dec := json.NewDecoder(resp.Body)
+	err = dec.Decode(&result)
+
+	if err != nil {
+		return t, err
+	}
 
 	t = t.loadProjectsData(result["projects"].([]interface{}))
 	t = t.loadItemData(result["items"].([]interface{}))
@@ -130,7 +141,6 @@ func (t Todoist) ItemComplete(item Item) {
 
 	if err != nil {
 		log.Println("fail")
-		log.Println(os.Stderr, err)
 	}
 
 	if resp == nil {
@@ -156,6 +166,43 @@ func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 
 	commands := make([]Command, 1)
 	commands[0] = command
+	json, err := json.Marshal(commands)
+
+	if err != nil {
+		return err
+	}
+
+	data := url.Values{}
+	data.Set("token", t.token)
+	data.Set("commands", string(json[:]))
+
+	resp, err := http.PostForm("https://todoist.com/api/v7/sync", data)
+
+	if err != nil {
+		return err
+	}
+
+	if resp == nil {
+		log.Println("OH NO")
+	}
+
+	return nil
+}
+
+func (t Todoist) ItemDelete(item *Item) error {
+	// make the data
+	args := make(map[string][]int)
+	args["ids"] = []int{item.ID}
+
+	command := Command{
+		Type: "item_delete",
+		UUID: uuid.New().String(),
+		Args: args,
+	}
+
+	commands := make([]Command, 1)
+	commands[0] = command
+
 	json, err := json.Marshal(commands)
 
 	if err != nil {

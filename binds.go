@@ -24,6 +24,11 @@ func bindsInit() {
 					showScreen(updateItem)
 					break
 				}
+			case 'd':
+				if app.ui.screen == items {
+					itemDelete()
+					break
+				}
 			case 'p':
 				showScreen(projects)
 				break

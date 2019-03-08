@@ -25,6 +25,7 @@ TODOISTA_KEY=1234abcd ./todoista
 - [m] Go to messages screen
 - [`<enter>`] On an Item to complete it, on a Project to view its Items
 - [u] On an Item to update it
+- [d] On an Item to delete it
 
 
 ## TODO
