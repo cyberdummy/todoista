@@ -14,10 +14,20 @@ func showItemsUi() {
 	app.ui.idx.SetSelectable(false, false)
 	// When a user selects a project
 	app.ui.idx.SetSelectedFunc(func(row int, column int) {
+		if len(app.ui.items) < (row+1) {
+			SetUiMessage("No item selected")
+			return
+		}
+
 		SetUiMessage("Completing Task")
 		app.todoist.ItemComplete(*app.ui.items[row])
 		SetUiMessage("Task Completed")
 		DoSync()
+
+		// if was last item in list select prev
+		if len(app.ui.items) < (row+1) && row != 0 {
+			app.ui.idx.Select((row-1), 0)
+		}
 	})
 
 	// Build the project table rows
