@@ -37,9 +37,9 @@ func addMessage(message message) {
 	app.msgs = append(app.msgs, message)
 }
 
-// showMessagesUi called when we want to display the interface for view the
+// showMessagesUI called when we want to display the interface for view the
 // message stack.
-func showMessagesUi() {
+func showMessagesUI() {
 	app.ui.idx.Clear()
 	app.ui.idx.SetSelectable(false, false)
 

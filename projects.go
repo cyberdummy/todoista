@@ -56,7 +56,7 @@ func getTomorrow() *todoist.Project {
 	}
 }
 
-func showProjectsUi() {
+func showProjectsUI() {
 	app.ui.status.SetText("Project Selection")
 
 	app.ui.idx.SetSelectable(false, false)

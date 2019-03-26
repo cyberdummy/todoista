@@ -46,15 +46,15 @@ func showScreen(show activeScreen) {
 
 	switch show {
 	case projects:
-		showProjectsUi() // projects.go
+		showProjectsUI() // projects.go
 		historyAdd(hRecord{screen: show})
 		break
 	case items:
-		showItemsUi() // items.go
+		showItemsUI() // items.go
 		historyAdd(hRecord{screen: show, id: app.ui.project.ID})
 		break
 	case messages:
-		showMessagesUi() // messages.go
+		showMessagesUI() // messages.go
 		break
 	case addItem:
 		showAddItem()

@@ -9,12 +9,12 @@ import (
 	"github.com/rivo/tview"
 )
 
-func showItemsUi() {
+func showItemsUI() {
 	app.ui.status.SetText("|" + app.ui.project.Name + "|")
 	app.ui.idx.SetSelectable(false, false)
 	// When a user selects a project
 	app.ui.idx.SetSelectedFunc(func(row int, column int) {
-		if len(app.ui.items) < (row+1) {
+		if len(app.ui.items) < (row + 1) {
 			SetUiMessage("No item selected")
 			return
 		}
@@ -26,7 +26,7 @@ func showItemsUi() {
 
 		// if was last item in list select prev
 		if len(app.ui.items) < (row+1) && row != 0 {
-			app.ui.idx.Select((row-1), 0)
+			app.ui.idx.Select((row - 1), 0)
 		}
 	})
 
@@ -85,7 +85,7 @@ func itemDelete() {
 	// find selected one..
 	row, _ := app.ui.idx.GetSelection()
 
-	if len(app.ui.items) < (row+1) {
+	if len(app.ui.items) < (row + 1) {
 		SetUiMessage("No item selected")
 		return
 	}
@@ -96,7 +96,7 @@ func itemDelete() {
 
 	// if was last item in list select prev
 	if len(app.ui.items) < (row+1) && row != 0 {
-		app.ui.idx.Select((row-1), 0)
+		app.ui.idx.Select((row - 1), 0)
 	}
 }
 
@@ -144,7 +144,7 @@ func showAddItem() {
 			return
 		}
 
-		err = historyGoToLast((items|projects))
+		err = historyGoToLast((items | projects))
 
 		if err != nil {
 			showScreen(projects)

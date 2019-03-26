@@ -3,8 +3,8 @@ package todoist_test
 import (
 	"net/http"
 	"net/http/httptest"
-	"testing"
 	"strings"
+	"testing"
 
 	"github.com/cyberdummy/todoista/todoist"
 )
@@ -46,12 +46,12 @@ func TestFullSyncRead(t *testing.T) {
 	defer server.Close()
 
 	// Use Client & URL from our local test server
-	api,err := todoist.New(token)
+	api, err := todoist.New(token)
 	api.SetDomain(server.URL)
-	api,err = api.ReadSync()
+	api, err = api.ReadSync()
 
 	if err != nil {
-		t.Error("Got error "+err.Error())
+		t.Error("Got error " + err.Error())
 	}
 
 	if len(api.Items) != 2 {

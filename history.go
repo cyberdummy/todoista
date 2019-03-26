@@ -7,7 +7,7 @@ import (
 // historical record
 type hRecord struct {
 	screen activeScreen
-	id int
+	id     int
 }
 
 func historyInit() {
@@ -20,7 +20,7 @@ func historyAdd(rec hRecord) {
 
 // go to the last projects or items screen we were on
 func historyGoToLast(screens activeScreen) error {
-	for i := len(app.hist)-1; i >= 0; i-- {
+	for i := len(app.hist) - 1; i >= 0; i-- {
 		rec := app.hist[i]
 
 		if rec.screen&screens != 0 {
@@ -35,9 +35,9 @@ func historyGoTo(rec hRecord) error {
 	switch rec.screen {
 	case items:
 		// set the project via its ID
-		if (rec.id == -1) {
+		if rec.id == -1 {
 			app.ui.project = getToday()
-		} else if (rec.id == -2) {
+		} else if rec.id == -2 {
 			app.ui.project = getTomorrow()
 		} else {
 			for key, value := range app.todoist.Projects {

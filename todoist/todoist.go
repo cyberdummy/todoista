@@ -36,7 +36,7 @@ type Todoist struct {
 	Items    []Item
 
 	httpClient http.Client
-	syncURL string
+	syncURL    string
 }
 
 // Create a new todoist context.
@@ -44,12 +44,12 @@ func New(token string) (*Todoist, error) {
 	return &Todoist{
 		token:      token,
 		httpClient: http.Client{},
-		syncURL: syncURL,
+		syncURL:    syncURL,
 	}, nil
 }
 
 // SetDomain sets the base domain for reqeusts
-func (t *Todoist) SetDomain (domain string) {
+func (t *Todoist) SetDomain(domain string) {
 	t.syncURL = domain + "/api/v7/sync"
 }
 
