@@ -92,7 +92,10 @@ func (t *Todoist) ReadSync() (*Todoist, error) {
 		return t, err
 	}
 
-	t = t.loadProjectsData(result["projects"].([]interface{}))
+	if result["projects"] != nil {
+		t = t.loadProjectsData(result["projects"].([]interface{}))
+	}
+
 	t = t.loadItemData(result["items"].([]interface{}))
 
 	return t, nil
