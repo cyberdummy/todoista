@@ -40,7 +40,7 @@ func uiInit() {
 // showScreen make sure the specified screen layout is displayed.
 func showScreen(show activeScreen) {
 	if app.ui.screen == show {
-		SetUiMessage("Already on that screen")
+		setUIMessage("Already on that screen")
 		return
 	}
 

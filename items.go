@@ -15,14 +15,14 @@ func showItemsUI() {
 	// When a user selects a project
 	app.ui.idx.SetSelectedFunc(func(row int, column int) {
 		if len(app.ui.items) < (row + 1) {
-			SetUiMessage("No item selected")
+			setUIMessage("No item selected")
 			return
 		}
 
-		SetUiMessage("Completing Task")
+		setUIMessage("Completing Task")
 		app.todoist.ItemComplete(*app.ui.items[row])
-		SetUiMessage("Task Completed")
-		DoSync()
+		setUIMessage("Task Completed")
+		doSync()
 
 		// if was last item in list select prev
 		if len(app.ui.items) < (row+1) && row != 0 {
@@ -81,18 +81,18 @@ func buildItemIdx() {
 }
 
 func itemDelete() {
-	SetUiMessage("Deleting Item..")
+	setUIMessage("Deleting Item..")
 	// find selected one..
 	row, _ := app.ui.idx.GetSelection()
 
 	if len(app.ui.items) < (row + 1) {
-		SetUiMessage("No item selected")
+		setUIMessage("No item selected")
 		return
 	}
 
 	app.todoist.ItemDelete(app.ui.items[row])
-	SetUiMessage("Item Deleted")
-	DoSync()
+	setUIMessage("Item Deleted")
+	doSync()
 
 	// if was last item in list select prev
 	if len(app.ui.items) < (row+1) && row != 0 {
@@ -129,7 +129,7 @@ func showAddItem() {
 
 	// make the project drop down
 	form = itemForm(func() {
-		SetUiMessage("Adding item...")
+		setUIMessage("Adding item...")
 
 		idx, _ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
 
@@ -139,7 +139,7 @@ func showAddItem() {
 			app.todoist.Projects[idx].ID)
 
 		if err != nil {
-			SetUiMessage("Add item failed! [red]" + err.Error())
+			setUIMessage("Add item failed! [red]" + err.Error())
 			addMessage(message{message: err.Error(), isError: true})
 			return
 		}
@@ -150,7 +150,7 @@ func showAddItem() {
 			showScreen(projects)
 		}
 
-		DoSync()
+		doSync()
 	})
 
 	createFormLayout(form)
@@ -163,7 +163,7 @@ func showUpdateItem(item *todoist.Item) {
 
 	// make the project drop down
 	form = itemForm(func() {
-		SetUiMessage("Updating item...")
+		setUIMessage("Updating item...")
 
 		idx, _ := form.GetFormItem(2).(*tview.DropDown).GetCurrentOption()
 
@@ -174,7 +174,7 @@ func showUpdateItem(item *todoist.Item) {
 			app.todoist.Projects[idx].ID)
 
 		if err != nil {
-			SetUiMessage("Update item failed! [red]" + err.Error())
+			setUIMessage("Update item failed! [red]" + err.Error())
 			addMessage(message{message: err.Error(), isError: true})
 			return
 		}
@@ -186,7 +186,7 @@ func showUpdateItem(item *todoist.Item) {
 			showScreen(projects)
 		}
 
-		DoSync()
+		doSync()
 	})
 
 	form.GetFormItem(0).(*tview.InputField).SetText(item.Content)

@@ -33,25 +33,25 @@ func main() {
 	historyInit()
 
 	showScreen(projects)
-	DoSync()
+	doSync()
 
 	uiRun()
 
 	messagesShutdown()
 }
 
-func SetUiMessage(message string) {
+func setUIMessage(message string) {
 	app.ui.msg.SetText(message)
 	app.ui.app.Draw()
 }
 
-func DoSync() {
+func doSync() {
 	var err error
-	SetUiMessage("Syncing...")
+	setUIMessage("Syncing...")
 	app.todoist, err = app.todoist.ReadSync()
 
 	if err != nil {
-		SetUiMessage("Sync failed! [red]" + err.Error())
+		setUIMessage("Sync failed! [red]" + err.Error())
 		addMessage(message{message: err.Error(), isError: true})
 		return
 	}
@@ -65,6 +65,6 @@ func DoSync() {
 		break
 	}
 
-	SetUiMessage("Sync Complete")
+	setUIMessage("Sync Complete")
 	app.ui.app.Draw()
 }

@@ -13,14 +13,16 @@ import (
 	"github.com/google/uuid"
 )
 
-var syncURL string = "https://todoist.com/api/v7/sync"
+var syncURL = "https://todoist.com/api/v7/sync"
 
+// Project holds information related to a project
 type Project struct {
 	Name     string
 	ID       int
 	GetItems func() []Item
 }
 
+// Item is a todo item
 type Item struct {
 	ID         int
 	Content    string
@@ -29,6 +31,7 @@ type Item struct {
 	DateString string
 }
 
+// Todoist a context struct for instance
 type Todoist struct {
 	token string
 
@@ -39,7 +42,7 @@ type Todoist struct {
 	syncURL    string
 }
 
-// Create a new todoist context.
+// New creates a new todoist context.
 func New(token string) (*Todoist, error) {
 	return &Todoist{
 		token:      token,
@@ -53,8 +56,8 @@ func (t *Todoist) SetDomain(domain string) {
 	t.syncURL = domain + "/api/v7/sync"
 }
 
-// GET's the complete set of data from the todoist API and loads it into the
-// todoist object.
+// ReadSync GET's the complete set of data from the todoist API and loads it
+// into the todoist object.
 func (t *Todoist) ReadSync() (*Todoist, error) {
 	req, err := http.NewRequest("GET", t.syncURL, nil)
 
@@ -101,29 +104,30 @@ func (t *Todoist) ReadSync() (*Todoist, error) {
 	return t, nil
 }
 
-type Command struct {
+type command struct {
 	Type   string      `json:"type"`
 	Args   interface{} `json:"args,omitempty"`
 	UUID   string      `json:"uuid"`
 	TempID string      `json:"temp_id,omitempty"`
 }
 
-type JSON map[string]interface{}
+type jsonData map[string]interface{}
 
+// ItemComplete sets the specfied item as completed
 func (t Todoist) ItemComplete(item Item) {
 	// make the data
-	args := make(JSON)
+	args := make(jsonData)
 	args["id"] = item.ID
 
-	command := Command{
+	cmd := command{
 		Type: "item_close",
 		UUID: uuid.New().String(),
 		Args: args,
 	}
 
-	commands := make([]Command, 1)
-	commands[0] = command
-	json, err := json.Marshal(commands)
+	cmds := make([]command, 1)
+	cmds[0] = cmd
+	json, err := json.Marshal(cmds)
 
 	if err != nil {
 		log.Fatal(err)
@@ -153,23 +157,24 @@ func (t Todoist) ItemComplete(item Item) {
 	// resync or summtin
 }
 
+// ItemAdd adds a new item
 func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 	// make the data
-	args := make(JSON)
+	args := make(jsonData)
 	args["content"] = content
 	args["date_string"] = date
 	args["project_id"] = projectID
 
-	command := Command{
+	cmd := command{
 		Type:   "item_add",
 		UUID:   uuid.New().String(),
 		TempID: uuid.New().String(),
 		Args:   args,
 	}
 
-	commands := make([]Command, 1)
-	commands[0] = command
-	json, err := json.Marshal(commands)
+	cmds := make([]command, 1)
+	cmds[0] = cmd
+	json, err := json.Marshal(cmds)
 
 	if err != nil {
 		return err
@@ -192,21 +197,22 @@ func (t Todoist) ItemAdd(content string, date string, projectID int) error {
 	return nil
 }
 
+// ItemDelete deletes as item
 func (t Todoist) ItemDelete(item *Item) error {
 	// make the data
 	args := make(map[string][]int)
 	args["ids"] = []int{item.ID}
 
-	command := Command{
+	cmd := command{
 		Type: "item_delete",
 		UUID: uuid.New().String(),
 		Args: args,
 	}
 
-	commands := make([]Command, 1)
-	commands[0] = command
+	cmds := make([]command, 1)
+	cmds[0] = cmd
 
-	json, err := json.Marshal(commands)
+	json, err := json.Marshal(cmds)
 
 	if err != nil {
 		return err
@@ -229,26 +235,27 @@ func (t Todoist) ItemDelete(item *Item) error {
 	return nil
 }
 
+// ItemUpdate update an item
 func (t Todoist) ItemUpdate(item *Item, content string, date string, projectID int) error {
 	// make the data
-	args := make(JSON)
+	args := make(jsonData)
 	args["id"] = item.ID
 	args["content"] = content
 	args["date_string"] = date
 	args["project_id"] = projectID
 
-	command := Command{
+	cmd := command{
 		Type: "item_update",
 		UUID: uuid.New().String(),
 		Args: args,
 	}
 
-	commands := make([]Command, 1)
-	commands[0] = command
+	cmds := make([]command, 1)
+	cmds[0] = cmd
 
 	if item.ProjectID != projectID {
 		// Add a move command if project ID differs
-		moveArgs := make(JSON)
+		moveArgs := make(jsonData)
 		moveArgs["to_project"] = projectID
 
 		// Figure out how to make this better?
@@ -257,16 +264,16 @@ func (t Todoist) ItemUpdate(item *Item, content string, date string, projectID i
 		items[prop] = []int{item.ID}
 		moveArgs["project_items"] = items
 
-		command = Command{
+		cmd = command{
 			Type: "item_move",
 			UUID: uuid.New().String(),
 			Args: moveArgs,
 		}
 
-		commands = append(commands, command)
+		cmds = append(cmds, cmd)
 	}
 
-	json, err := json.Marshal(commands)
+	json, err := json.Marshal(cmds)
 
 	if err != nil {
 		return err

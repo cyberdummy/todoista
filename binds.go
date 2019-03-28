@@ -14,7 +14,7 @@ func bindsInit() {
 
 			switch event.Rune() {
 			case 's':
-				DoSync()
+				doSync()
 				break
 			case 'a':
 				showScreen(addItem)
