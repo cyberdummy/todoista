@@ -40,9 +40,10 @@ func main() {
 	messagesShutdown()
 }
 
-func setUIMessage(message string) {
-	app.ui.msg.SetText(message)
-	app.ui.app.Draw()
+func setUIMessage(msg string) {
+	app.ui.msg.SetText(msg)
+	addMessage(message{isError: false, message: msg})
+	//app.ui.app.Draw()
 }
 
 func doSync() {
@@ -66,5 +67,5 @@ func doSync() {
 	}
 
 	setUIMessage("Sync Complete")
-	app.ui.app.Draw()
+	//app.ui.app.Draw()
 }

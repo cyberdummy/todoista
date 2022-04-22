@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/cyberdummy/todoista/todoist"
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -19,7 +19,7 @@ func showItemsUI() {
 			return
 		}
 
-		setUIMessage("Completing Task")
+		setUIMessage("Completing Task: " + app.ui.items[row].Content)
 		app.todoist.ItemComplete(*app.ui.items[row])
 		setUIMessage("Task Completed")
 		doSync()

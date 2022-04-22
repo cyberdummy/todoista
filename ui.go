@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/cyberdummy/todoista/todoist"
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -66,14 +66,13 @@ func showScreen(show activeScreen) {
 		showUpdateItem(app.ui.items[row])
 		app.ui.screen = show
 		return
-		return
 	}
 
 	app.ui.screen = show
 
 	app.ui.app.SetRoot(app.ui.idxLayout, true)
 	app.ui.app.SetFocus(app.ui.idx)
-	app.ui.app.Draw()
+	//app.ui.app.Draw()
 }
 
 // uiRun starts the main loop thats draws the UI.
@@ -95,7 +94,7 @@ func createMessage() {
 		SetDynamicColors(true).
 		SetText("-").
 		SetChangedFunc(func() {
-			app.ui.app.Draw()
+			//app.ui.app.Draw()
 		})
 }
 
@@ -103,7 +102,7 @@ func createMessage() {
 func createIndexLayout() {
 	app.ui.idx = tview.NewTable()
 	app.ui.idx.SetBackgroundColor(tcell.ColorGray)
-	app.ui.idx.SetSelectedStyle(tcell.ColorBlack, tcell.ColorOlive, 0)
+	app.ui.idx.SetSelectedStyle(tcell.StyleDefault.Foreground(tcell.ColorBlack).Background(tcell.ColorOlive))
 
 	app.ui.idxLayout = tview.NewFlex().
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
@@ -123,5 +122,5 @@ func createFormLayout(form *tview.Form) {
 
 	app.ui.app.SetRoot(layout, true)
 	app.ui.app.SetFocus(form)
-	app.ui.app.Draw()
+	//app.ui.app.Draw()
 }

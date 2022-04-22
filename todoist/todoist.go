@@ -13,7 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var syncURL = "https://todoist.com/api/v7/sync"
+var syncURL = "https://todoist.com/api/v8/sync"
 
 // Project holds information related to a project
 type Project struct {
@@ -144,7 +144,7 @@ func (t Todoist) ItemComplete(item Item) {
 
 	//resp,err := client.Do(req)
 
-	resp, err := http.PostForm("https://todoist.com/api/v7/sync", data)
+	resp, err := http.PostForm("https://todoist.com/api/v8/sync", data)
 
 	if err != nil {
 		log.Println("fail")
@@ -319,10 +319,19 @@ func (t *Todoist) loadItemData(items []interface{}) *Todoist {
 		// check due_date_utc set...
 		var due time.Time
 
-		if item["due_date_utc"] != nil {
-			due, _ = time.Parse(
-				"Mon 02 Jan 2006 15:04:05 -0700",
-				item["due_date_utc"].(string))
+		if item["due"] != nil {
+			dueValue := item["due"].(map[string]interface{})
+			dueLen := len([]rune(dueValue["date"].(string)))
+
+			if dueLen == 19 {
+				due, _ = time.Parse(
+					"2006-01-02T15:04:05",
+					dueValue["date"].(string))
+			} else {
+				due, _ = time.Parse(
+					"2006-01-02",
+					dueValue["date"].(string))
+			}
 		} else {
 			due = time.Time{}
 		}
